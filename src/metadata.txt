@@ -1,0 +1,25 @@
+
+[general]
+name=QBeachball
+qgisMinimumVersion=3.0
+homepage=https://github.com/lymperis-e/Greek-Data-QGIS-Plugin
+category=Web
+icon=assets/img/icon.png
+server=False
+experimental=False
+hasProcessingProvider=no
+tags=python, seismic, focal mechanism, beachball, geology, seismology, earthquake, fault, hypocenter, epicenter
+version=2.0.2
+author=Lymperis Efstathios
+email=geo.elymperis@gmail.com
+tracker=https://github.com/lymperis-e/Greek-Data-QGIS-Plugin/issues
+repository=https://github.com/lymperis-e/Greek-Data-QGIS-Plugin
+# changelog=
+# plugin_dependencies=
+description=Easily plot focal mechanisms (beachballs) onto a map
+about=QBeachball is a QGIS plugin that allows users to plot focal mechanisms (beachballs) onto a map. The plugin is designed to be user-friendly and easy to use, with a simple interface that allows users to quickly plot beachballs onto a map. The plugin is ideal for geologists, seismologists, and other professionals who work with focal mechanisms and need to visualize them on a map. QBeachball is open source and free to use, and is available for download from the QGIS plugin repository.
+
+
+
+
+
