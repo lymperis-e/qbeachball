@@ -279,8 +279,6 @@ class QBeachball:
             size=symbol_size,
         )
 
-        print(f"layer params: {[svg_layer.parameters()]}")
-
         # Set data-defined property for SVG file path
         # see: https://qgis-developer.osgeo.narkive.com/BFbOJ9b8/set-data-defined-override-expression-with-python#post4
         svg_expression = f"""concat('{svgs_directory}/', "{event_column}", '.svg')"""
@@ -294,6 +292,19 @@ class QBeachball:
 
         # Refresh the layer to apply changes
         selected_layer.triggerRepaint()
+
+    def update_fields(self):
+        """Update the fields comboboxes, based on the currently selected layer"""
+        selected_layer = self.dockwidget.events_layer_input.currentLayer()
+        if selected_layer:
+            self.dockwidget.id_field_select.setLayer(selected_layer)
+
+    def initialize_params(self):
+        """Initialize the parameters for the plugin"""
+        params = {
+            "input_layer": None,
+            "id_field": None,
+        }
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -309,6 +320,12 @@ class QBeachball:
             self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
+            # Connect signals
             self.dockwidget.svgs_output_widget.setFilePath(get_plugin_output_dir())
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
             self.dockwidget.btn_plot.clicked.connect(self.plot_beachballs)
+
+            self.dockwidget.events_layer_input.layerChanged.connect(self.update_fields)
+
+            # Setup fields for the first time
+            self.update_fields()
