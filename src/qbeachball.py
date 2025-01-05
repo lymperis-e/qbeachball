@@ -90,6 +90,8 @@ class QBeachball:
         self.pluginIsActive = False
         self.dockwidget = None
 
+        self.plugin_params = None
+
     def tr(self, message):
         """Get the translation for a string using Qt translation API.
 
@@ -209,31 +211,41 @@ class QBeachball:
         # remove the toolbar
         del self.toolbar
 
+        self.plugin_params = None
+
     # --------------------------------------------------------------------------
 
     def make_svgs(self):
-        # Check selected tab on 'input_selection_tab': 0 for CSV, 1 for QGIS Layer
-        input_csv = None
-        input_layer = None
-        selected_tab = self.dockwidget.input_selection_tab.currentIndex()
-        if selected_tab == 0:
-            input_csv = self.dockwidget.events_file_input.filePath()
-        elif selected_tab == 1:
-            input_layer = self.dockwidget.events_layer_input.currentLayer()
+        # input_csv = None
+        # input_layer = None
+        # selected_tab = self.dockwidget.input_selection_tab.currentIndex()
+        # if selected_tab == 0:
+        #     input_csv = self.dockwidget.events_file_input.filePath()
+        # elif selected_tab == 1:
+        #     input_layer = self.dockwidget.events_layer_input.currentLayer()
 
-        if not input_csv and not input_layer:
+        # if not input_csv and not input_layer:
+        #     self.iface.messageBar().pushMessage(
+        #         "Error",
+        #         "Please provide a CSV file or a QGIS layer",
+        #         level=Qgis.Critical,
+        #     )
+        #     return
+
+        INPUT_LAYER = self.plugin_params["input_layer"]
+        if not INPUT_LAYER:
             self.iface.messageBar().pushMessage(
                 "Error",
-                "Please provide a CSV file or a QGIS layer",
+                "Please provide a QGIS layer",
                 level=Qgis.Critical,
             )
             return
 
         successes = CreateBeachballs(
-            csv_file=input_csv,
-            qgs_layer=input_layer,
+            csv_file=None,
+            qgs_layer=INPUT_LAYER,
             max_rows=20,
-            directory=get_plugin_output_dir(),
+            directory=self.plugin_params["output_directory"],
             fig_format="svg",
             bb_size=20,
             bb_width=10,
@@ -250,7 +262,7 @@ class QBeachball:
         as the beachball images.
         """
 
-        selected_layer = self.dockwidget.events_layer_input.currentLayer()
+        selected_layer = self.plugin_params["input_layer"]
         if not selected_layer:
             self.iface.messageBar().pushMessage(
                 "Error",
@@ -263,9 +275,7 @@ class QBeachball:
         event_column = "Event"  # self.dockwidget.event_column_input.currentText()
 
         # Get the SVGs directory
-        svgs_directory = self.dockwidget.svgs_output_widget.filePath().replace(
-            "\\", "/"
-        )
+        svgs_directory = self.plugin_params["output_directory"].replace("\\", "/")
 
         # base_symbol = QgsSymbol.defaultSymbol(selected_layer.geometryType())
         symbol_size = 9
@@ -293,21 +303,39 @@ class QBeachball:
         # Refresh the layer to apply changes
         selected_layer.triggerRepaint()
 
-    def update_fields(self):
-        """Update the fields comboboxes, based on the currently selected layer"""
+    def handle_layer_changed(self):
+        """
+        Update the fields comboboxes, based on the currently selected layer,
+        and update the plugin parameters.
+        """
         selected_layer = self.dockwidget.events_layer_input.currentLayer()
         if selected_layer:
             self.dockwidget.id_field_select.setLayer(selected_layer)
+            self.plugin_params["input_layer"] = selected_layer
 
     def initialize_params(self):
         """Initialize the parameters for the plugin"""
         params = {
             "input_layer": None,
             "id_field": None,
+            "output_directory": get_plugin_output_dir(),
         }
+
+        return params
+
+    def update_params(self):
+        """Update the parameters for the plugin"""
+        selected_layer = self.dockwidget.events_layer_input.currentLayer()
+        id_field = self.dockwidget.id_field_select.currentField()
+        output_directory = self.dockwidget.svgs_output_widget.filePath()
+
+        self.plugin_params["input_layer"] = selected_layer
+        self.plugin_params["id_field"] = id_field
+        self.plugin_params["output_directory"] = output_directory
 
     def run(self):
         """Run method that loads and starts the plugin"""
+        self.plugin_params = self.initialize_params()
 
         if not self.pluginIsActive:
             self.pluginIsActive = True
@@ -325,7 +353,9 @@ class QBeachball:
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
             self.dockwidget.btn_plot.clicked.connect(self.plot_beachballs)
 
-            self.dockwidget.events_layer_input.layerChanged.connect(self.update_fields)
+            self.dockwidget.events_layer_input.layerChanged.connect(
+                self.handle_layer_changed
+            )
 
             # Setup fields for the first time
-            self.update_fields()
+            self.handle_layer_changed()
