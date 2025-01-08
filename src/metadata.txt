@@ -15,7 +15,7 @@ email=geo.elymperis@gmail.com
 tracker=https://github.com/lymperis-e/qbeachball/issues
 repository=https://github.com/lymperis-e/qbeachball
 # changelog=
-# plugin_dependencies=
+plugin_dependencies=obspy, matplotlib, numpy
 about=
     Easily plot focal mechanisms (beachballs) onto a map. Uses the <a href="https://docs.obspy.org/">ObsPy</a> library under the hood, to render beachball plots as SVG icons. </br></br>
 
