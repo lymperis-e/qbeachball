@@ -33,6 +33,8 @@ def make_bbs(
     bb_size,
     bb_width,
     event_id,
+    depth_based_color,
+    depth_field,
     tensor_components,
 ):
     """
@@ -56,6 +58,8 @@ def make_bbs(
             bb_width=int(bb_width) or 10,
             bb_color="b",
             event_id=event_id,
+            depth_based_color=depth_based_color,
+            depth_field=depth_field,
             tensor_components=tensor_components,
         )
         if i % 1000 == 0:
@@ -88,6 +92,8 @@ def handler(
     bb_size=None,
     bb_width=None,
     event_id="Event",
+    depth_based_color=True,
+    depth_field="Depth",
     tensor_components=None,
 ):
     """
@@ -131,6 +137,8 @@ def handler(
         bb_size,
         bb_width,
         event_id,
+        depth_based_color,
+        depth_field,
         tensor_components,
     )
     return successes

@@ -244,6 +244,8 @@ class QBeachball:
             bb_size=20,
             bb_width=10,
             event_id=self.plugin_params["id_field"],
+            depth_based_color=self.plugin_params["depth_based_color"],
+            depth_field=self.plugin_params["depth_field"],
             tensor_components=tensor_components,
         )
         self.iface.messageBar().pushMessage(
@@ -336,9 +338,25 @@ class QBeachball:
 
         if selected_layer:
             self.dockwidget.id_field_select.setLayer(selected_layer)
+            self.dockwidget.depth_color_field.setLayer(selected_layer)
+            self.dockwidget.depth_color_field.setField("Depth")
             self.plugin_params["input_layer"] = selected_layer
         else:
             self.plugin_params["input_layer"] = None
+
+    def handle_depth_based_color_changed(self):
+        """
+        Update the plugin parameters when the depth-based color checkbox is changed.
+        """
+
+        if self.dockwidget.depth_color_checkbox.isChecked():
+            self.dockwidget.depth_color_group.setEnabled(True)
+            self.dockwidget.depth_color_field.setField("Depth")
+
+            self.plugin_params["depth_based_color"] = True
+        else:
+            self.dockwidget.depth_color_group.setEnabled(False)
+            self.plugin_params["depth_based_color"] = False
 
     def initialize_params(self):
         """Initialize the parameters for the plugin"""
@@ -346,6 +364,8 @@ class QBeachball:
             "input_layer": None,
             "id_field": None,
             "output_directory": get_plugin_output_dir(),
+            "depth_based_color": True,
+            "depth_field": None,
             "tensor_components": {
                 "Mrr": None,
                 "Mtt": None,
@@ -367,6 +387,14 @@ class QBeachball:
         self.plugin_params["id_field"] = self.dockwidget.id_field_select.currentField()
         self.plugin_params["output_directory"] = (
             self.dockwidget.svgs_output_widget.filePath()
+        )
+
+        self.plugin_params["depth_based_color"] = (
+            self.dockwidget.depth_color_checkbox.isChecked()
+        )
+
+        self.plugin_params["depth_field"] = (
+            self.dockwidget.depth_color_field.currentField()
         )
 
         # Tensor components
@@ -417,6 +445,10 @@ class QBeachball:
             self.dockwidget.svgs_output_widget.setFilePath(get_plugin_output_dir())
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
             self.dockwidget.btn_plot.clicked.connect(self.plot_beachballs)
+
+            self.dockwidget.depth_color_checkbox.stateChanged.connect(
+                self.handle_depth_based_color_changed
+            )
 
             # Connect signals for field inputs
             self.dockwidget.id_field_select.fieldChanged.connect(self.update_params)

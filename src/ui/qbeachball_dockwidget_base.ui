@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>384</width>
-    <height>458</height>
+    <height>590</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -50,6 +50,9 @@ QListWidget::item::selected {
           </property>
          </widget>
         </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QgsMapLayerComboBox" name="events_layer_input"/>
+        </item>
         <item row="2" column="0" colspan="2">
          <widget class="QLabel" name="label_4">
           <property name="text">
@@ -57,7 +60,20 @@ QListWidget::item::selected {
           </property>
          </widget>
         </item>
-        <item row="4" column="0" colspan="2">
+        <item row="3" column="0" colspan="2">
+         <widget class="QgsFieldComboBox" name="id_field_select"/>
+        </item>
+        <item row="6" column="0">
+         <widget class="QCheckBox" name="depth_color_checkbox">
+          <property name="text">
+           <string>Epicenter depth-based color</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0" colspan="2">
          <widget class="QgsCollapsibleGroupBox" name="tensor_components_group">
           <property name="enabled">
            <bool>false</bool>
@@ -66,15 +82,21 @@ QListWidget::item::selected {
            <string>Moment Tensor Components</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
+           <item row="2" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mpp_input_field"/>
+           </item>
+           <item row="5" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mtp_input_field"/>
+           </item>
+           <item row="1" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mtt_input_field"/>
+           </item>
            <item row="0" column="0">
             <widget class="QLabel" name="label_5">
              <property name="text">
               <string>Mrr</string>
              </property>
             </widget>
-           </item>
-           <item row="0" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrr_input_field"/>
            </item>
            <item row="2" column="0">
             <widget class="QLabel" name="label_7">
@@ -104,6 +126,15 @@ QListWidget::item::selected {
              </property>
             </widget>
            </item>
+           <item row="3" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mrt_input_field"/>
+           </item>
+           <item row="4" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mrp_input_field"/>
+           </item>
+           <item row="0" column="1" colspan="3">
+            <widget class="QgsFieldComboBox" name="mrr_input_field"/>
+           </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_6">
              <property name="text">
@@ -111,39 +142,17 @@ QListWidget::item::selected {
              </property>
             </widget>
            </item>
-           <item row="1" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mtt_input_field"/>
-           </item>
-           <item row="2" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mpp_input_field"/>
-           </item>
-           <item row="3" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrt_input_field"/>
-           </item>
-           <item row="4" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrp_input_field"/>
-           </item>
-           <item row="5" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mtp_input_field"/>
-           </item>
           </layout>
          </widget>
         </item>
-        <item row="6" column="0">
+        <item row="12" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Save plots to:</string>
+           <string>Save icons to/ Read icons from:</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="1">
-         <widget class="QgsFileWidget" name="svgs_output_widget">
-          <property name="storageMode">
-           <enum>QgsFileWidget::GetDirectory</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
+        <item row="14" column="0">
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -159,25 +168,50 @@ QListWidget::item::selected {
           </property>
          </spacer>
         </item>
-        <item row="9" column="0" colspan="2">
+        <item row="15" column="0" colspan="2">
          <widget class="QPushButton" name="btn_make_svgs">
           <property name="text">
            <string>Create Icons</string>
           </property>
          </widget>
         </item>
-        <item row="11" column="0" colspan="2">
+        <item row="17" column="0" colspan="2">
          <widget class="QPushButton" name="btn_plot">
           <property name="text">
-           <string>Plot</string>
+           <string>Plot on Map</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
-         <widget class="QgsFieldComboBox" name="id_field_select"/>
+        <item row="7" column="0" colspan="2">
+         <widget class="QGroupBox" name="depth_color_group">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Depth field</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QgsFieldComboBox" name="depth_color_field"/>
+           </item>
+          </layout>
+         </widget>
         </item>
-        <item row="1" column="0" colspan="2">
-         <widget class="QgsMapLayerComboBox" name="events_layer_input"/>
+        <item row="13" column="0" colspan="2">
+         <widget class="QgsFileWidget" name="svgs_output_widget">
+          <property name="storageMode">
+           <enum>QgsFileWidget::GetDirectory</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>

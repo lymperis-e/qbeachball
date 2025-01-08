@@ -61,6 +61,8 @@ def make_beachball(
     bb_width=10,
     bb_color="b",
     event_id="Event",
+    depth_based_color=True,
+    depth_field="Depth",
     tensor_components=None,
 ):
     tensor_components = tensor_components or ["Mrr", "Mtt", "Mpp", "Mrt", "Mrp", "Mtp"]
@@ -72,7 +74,11 @@ def make_beachball(
     mt = [float(x) for x in mt]  # Cast to float
 
     # sdp = [ev["Strike_1"], ev["Dip_1"], ev["Rake_1"]]
-    bb_color = depth_to_color(float(ev["Depth"]))
+
+    # Default black
+    bb_color = "k"
+    if depth_based_color:
+        bb_color = depth_to_color(float(ev[depth_field]))
 
     outfile = f"{directory}/{event[event_id]}.{fig_format}"
 

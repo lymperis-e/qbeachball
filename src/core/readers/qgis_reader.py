@@ -15,8 +15,3 @@ def read_from_layer(layer, max_rows=None):
         row = {field.name(): feature[field.name()] for field in fields}
         rows.append(row)
     return rows
-    # for i, feature in enumerate(layer.getFeatures()):
-    #     if max_rows and i >= max_rows:
-    #         break
-    #     row = {field.name(): feature[field.name()] for field in fields}
-    #     rows.append(row)

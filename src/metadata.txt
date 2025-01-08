@@ -9,15 +9,21 @@ server=False
 experimental=False
 hasProcessingProvider=no
 tags=python, seismic, focal mechanism, beachball, geology, seismology, earthquake, fault, hypocenter, epicenter
-version=2.0.2
+version=1.0.0
 author=Lymperis Efstathios
 email=geo.elymperis@gmail.com
 tracker=https://github.com/lymperis-e/Greek-Data-QGIS-Plugin/issues
 repository=https://github.com/lymperis-e/Greek-Data-QGIS-Plugin
 # changelog=
 # plugin_dependencies=
-description=Easily plot focal mechanisms (beachballs) onto a map
-about=QBeachball is a QGIS plugin that allows users to plot focal mechanisms (beachballs) onto a map. The plugin is designed to be user-friendly and easy to use, with a simple interface that allows users to quickly plot beachballs onto a map. The plugin is ideal for geologists, seismologists, and other professionals who work with focal mechanisms and need to visualize them on a map. QBeachball is open source and free to use, and is available for download from the QGIS plugin repository.
+description=Easily plot focal mechanisms (beachballs) onto a map. Uses the [ObsPy](https://docs.obspy.org/) library under the hood, to render beachball plots as SVG icons. The workflow is split into 2 steps: \n 
+1. Beachball plots are created from a layer of events, and rendered as SVG icons. The icons are saved (by default in a folder called 'beachball_svgs' in the project directory) and named based on the selected ID field (may be an fid or an event name/identifier, but it must be unique). \n
+2. A layer symbology is created, using SVG markers with a data-defined expression, to load the SVG for each event based on the selected id field/event name. \n
+The user can then easily modify the symbology (e.g. change the marker size). \n\n
+The data at hand, must contain the 6 moment tensor components (Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) and the event location (latitude, longitude, depth). \n
+You can use a CSV/TSV file ([tutorial](https://www.qgistutorials.com/en/docs/importing_spreadsheets_csv.html)) or any other vector layer (e.g. shapefile, geopackage) with the required fields. \n
+The plugin was bootstraped using [this](https://rocksandwater.net/blog/2017/09/plot-focal-mechs-in-qgis/) amazing article by Richard Styron.
+about=Easily plot focal mechanisms (beachballs) onto a map. 
 
 
 
