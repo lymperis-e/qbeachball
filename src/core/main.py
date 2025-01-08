@@ -26,7 +26,15 @@ from .readers.file_reader import read_from_csv, read_from_sqlite
 from .readers.qgis_reader import read_from_layer
 
 
-def make_bbs(rows, directory, fig_format, bb_size, bb_width):
+def make_bbs(
+    rows,
+    directory,
+    fig_format,
+    bb_size,
+    bb_width,
+    event_id,
+    tensor_components,
+):
     """
     Make beachballs from a list of rows.
 
@@ -47,6 +55,8 @@ def make_bbs(rows, directory, fig_format, bb_size, bb_width):
             bb_size=int(bb_size) or 20,
             bb_width=int(bb_width) or 10,
             bb_color="b",
+            event_id=event_id,
+            tensor_components=tensor_components,
         )
         if i % 1000 == 0:
             print(i)
@@ -77,6 +87,8 @@ def handler(
     fig_format=None,
     bb_size=None,
     bb_width=None,
+    event_id="Event",
+    tensor_components=None,
 ):
     """
     Handle the process of making beachballs from a SQLite database or a CSV file.
@@ -118,6 +130,8 @@ def handler(
         fig_format,
         bb_size,
         bb_width,
+        event_id,
+        tensor_components,
     )
     return successes
 

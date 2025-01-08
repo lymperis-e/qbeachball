@@ -55,28 +55,30 @@ def depth_to_color(val, v_min=10.0, v_max=700.0, cmap="viridis", log=True):
 def make_beachball(
     event,
     directory,
-    fig_format="png",
+    fig_format="svg",
     bb_linewidth=2,
     bb_size=20,
     bb_width=10,
     bb_color="b",
+    event_id="Event",
+    tensor_components=None,
 ):
-    ev = event
+    tensor_components = tensor_components or ["Mrr", "Mtt", "Mpp", "Mrt", "Mrp", "Mtp"]
 
-    mt = [ev["Mrr"], ev["Mtt"], ev["Mpp"], ev["Mrt"], ev["Mrp"], ev["Mtp"]]
+    ev = event
+    mt = [
+        ev[component] for component in tensor_components
+    ]  # [ev["Mrr"], ev["Mtt"], ev["Mpp"], ev["Mrt"], ev["Mrp"], ev["Mtp"]]
     mt = [float(x) for x in mt]  # Cast to float
 
     # sdp = [ev["Strike_1"], ev["Dip_1"], ev["Rake_1"]]
     bb_color = depth_to_color(float(ev["Depth"]))
 
-    outfile = f"{directory}/{event['Event']}.{fig_format}"
-    # Convert to path
-    # outfile = Path(outfile)
-    # print("Saving to", outfile)
+    outfile = f"{directory}/{event[event_id]}.{fig_format}"
 
     fig = plt.figure(0)
     try:
-        logging.info("Making beachball for %s", event["Event"])
+        logging.info("Making beachball for %s", event[event_id])
         beachball(
             mt,
             linewidth=bb_linewidth,

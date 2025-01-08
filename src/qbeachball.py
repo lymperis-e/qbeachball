@@ -216,22 +216,6 @@ class QBeachball:
     # --------------------------------------------------------------------------
 
     def make_svgs(self):
-        # input_csv = None
-        # input_layer = None
-        # selected_tab = self.dockwidget.input_selection_tab.currentIndex()
-        # if selected_tab == 0:
-        #     input_csv = self.dockwidget.events_file_input.filePath()
-        # elif selected_tab == 1:
-        #     input_layer = self.dockwidget.events_layer_input.currentLayer()
-
-        # if not input_csv and not input_layer:
-        #     self.iface.messageBar().pushMessage(
-        #         "Error",
-        #         "Please provide a CSV file or a QGIS layer",
-        #         level=Qgis.Critical,
-        #     )
-        #     return
-
         INPUT_LAYER = self.plugin_params["input_layer"]
         if not INPUT_LAYER:
             self.iface.messageBar().pushMessage(
@@ -241,6 +225,16 @@ class QBeachball:
             )
             return
 
+        # Order MATTERS
+        tensor_components = [
+            self.plugin_params["tensor_components"]["Mrr"],
+            self.plugin_params["tensor_components"]["Mtt"],
+            self.plugin_params["tensor_components"]["Mpp"],
+            self.plugin_params["tensor_components"]["Mrt"],
+            self.plugin_params["tensor_components"]["Mrp"],
+            self.plugin_params["tensor_components"]["Mtp"],
+        ]
+
         successes = CreateBeachballs(
             csv_file=None,
             qgs_layer=INPUT_LAYER,
@@ -249,6 +243,8 @@ class QBeachball:
             fig_format="svg",
             bb_size=20,
             bb_width=10,
+            event_id=self.plugin_params["id_field"],
+            tensor_components=tensor_components,
         )
         self.iface.messageBar().pushMessage(
             "Success",
@@ -272,7 +268,7 @@ class QBeachball:
             return
 
         # Get the Event column index
-        event_column = "Event"  # self.dockwidget.event_column_input.currentText()
+        event_column = self.plugin_params["id_field"]
 
         # Get the SVGs directory
         svgs_directory = self.plugin_params["output_directory"].replace("\\", "/")
@@ -303,15 +299,46 @@ class QBeachball:
         # Refresh the layer to apply changes
         selected_layer.triggerRepaint()
 
+    def update_tensor_components_inputs(self):
+        """
+        Update the tensor components comboboxes, based on the currently selected layer.
+        """
+        selected_layer = self.dockwidget.events_layer_input.currentLayer()
+
+        if selected_layer:
+            self.dockwidget.tensor_components_group.setEnabled(True)
+
+            # Enable tensor components inputs, and set the layer for each
+            tensor_components = [
+                ("Mrr", self.dockwidget.mrr_input_field),
+                ("Mtt", self.dockwidget.mtt_input_field),
+                ("Mpp", self.dockwidget.mpp_input_field),
+                ("Mrt", self.dockwidget.mrt_input_field),
+                ("Mrp", self.dockwidget.mrp_input_field),
+                ("Mtp", self.dockwidget.mtp_input_field),
+            ]
+            for component, control in tensor_components:
+                control.setLayer(selected_layer)
+                control.setField(
+                    component
+                )  # Set the field to the corresponding tensor component, if it exists
+        else:
+            self.dockwidget.tensor_components_group.setEnabled(False)
+
     def handle_layer_changed(self):
         """
         Update the fields comboboxes, based on the currently selected layer,
         and update the plugin parameters.
         """
         selected_layer = self.dockwidget.events_layer_input.currentLayer()
+
+        self.update_tensor_components_inputs()
+
         if selected_layer:
             self.dockwidget.id_field_select.setLayer(selected_layer)
             self.plugin_params["input_layer"] = selected_layer
+        else:
+            self.plugin_params["input_layer"] = None
 
     def initialize_params(self):
         """Initialize the parameters for the plugin"""
@@ -319,19 +346,48 @@ class QBeachball:
             "input_layer": None,
             "id_field": None,
             "output_directory": get_plugin_output_dir(),
+            "tensor_components": {
+                "Mrr": None,
+                "Mtt": None,
+                "Mpp": None,
+                "Mrt": None,
+                "Mrp": None,
+                "Mtp": None,
+            },
         }
 
         return params
 
     def update_params(self):
-        """Update the parameters for the plugin"""
-        selected_layer = self.dockwidget.events_layer_input.currentLayer()
-        id_field = self.dockwidget.id_field_select.currentField()
-        output_directory = self.dockwidget.svgs_output_widget.filePath()
+        """Update the parameters for the plugin, based on the current state of the dockwidget"""
 
-        self.plugin_params["input_layer"] = selected_layer
-        self.plugin_params["id_field"] = id_field
-        self.plugin_params["output_directory"] = output_directory
+        self.plugin_params["input_layer"] = (
+            self.dockwidget.events_layer_input.currentLayer()
+        )
+        self.plugin_params["id_field"] = self.dockwidget.id_field_select.currentField()
+        self.plugin_params["output_directory"] = (
+            self.dockwidget.svgs_output_widget.filePath()
+        )
+
+        # Tensor components
+        self.plugin_params["tensor_components"][
+            "Mrr"
+        ] = self.dockwidget.mrr_input_field.currentField()
+        self.plugin_params["tensor_components"][
+            "Mtt"
+        ] = self.dockwidget.mtt_input_field.currentField()
+        self.plugin_params["tensor_components"][
+            "Mpp"
+        ] = self.dockwidget.mpp_input_field.currentField()
+        self.plugin_params["tensor_components"][
+            "Mrt"
+        ] = self.dockwidget.mrt_input_field.currentField()
+        self.plugin_params["tensor_components"][
+            "Mrp"
+        ] = self.dockwidget.mrp_input_field.currentField()
+        self.plugin_params["tensor_components"][
+            "Mtp"
+        ] = self.dockwidget.mtp_input_field.currentField()
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -348,10 +404,24 @@ class QBeachball:
             self.iface.addDockWidget(Qt.LeftDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
+            tensor_components = [
+                ("Mrr", self.dockwidget.mrr_input_field),
+                ("Mtt", self.dockwidget.mtt_input_field),
+                ("Mpp", self.dockwidget.mpp_input_field),
+                ("Mrt", self.dockwidget.mrt_input_field),
+                ("Mrp", self.dockwidget.mrp_input_field),
+                ("Mtp", self.dockwidget.mtp_input_field),
+            ]
+
             # Connect signals
             self.dockwidget.svgs_output_widget.setFilePath(get_plugin_output_dir())
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
             self.dockwidget.btn_plot.clicked.connect(self.plot_beachballs)
+
+            # Connect signals for field inputs
+            self.dockwidget.id_field_select.fieldChanged.connect(self.update_params)
+            for _, control in tensor_components:
+                control.fieldChanged.connect(self.update_params)
 
             self.dockwidget.events_layer_input.layerChanged.connect(
                 self.handle_layer_changed
@@ -359,3 +429,4 @@ class QBeachball:
 
             # Setup fields for the first time
             self.handle_layer_changed()
+            self.update_params()
