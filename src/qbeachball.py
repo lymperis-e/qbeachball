@@ -225,7 +225,8 @@ class QBeachball:
             )
             return
 
-        # Order MATTERS
+        # Order MATTERS:
+        # https://docs.obspy.org/packages/autogen/obspy.imaging.beachball.beach.html
         tensor_components = [
             self.plugin_params["tensor_components"]["Mrr"],
             self.plugin_params["tensor_components"]["Mtt"],
@@ -234,6 +235,16 @@ class QBeachball:
             self.plugin_params["tensor_components"]["Mrp"],
             self.plugin_params["tensor_components"]["Mtp"],
         ]
+
+        # Order matters here too
+        sdp_components = [
+            self.plugin_params["sdp_components"]["strike"],
+            self.plugin_params["sdp_components"]["dip"],
+            self.plugin_params["sdp_components"]["rake"],
+        ]
+
+        # Check which tab is checked: tensor or sdp
+        method = self.dockwidget.focal_mechanism_tabs.currentIndex()
 
         successes = CreateBeachballs(
             csv_file=None,
@@ -246,7 +257,8 @@ class QBeachball:
             event_id=self.plugin_params["id_field"],
             depth_based_color=self.plugin_params["depth_based_color"],
             depth_field=self.plugin_params["depth_field"],
-            tensor_components=tensor_components,
+            tensor_components=tensor_components if method == 1 else None,
+            sdp_components=sdp_components if method == 0 else None,
         )
         self.iface.messageBar().pushMessage(
             "Success",
@@ -308,8 +320,6 @@ class QBeachball:
         selected_layer = self.dockwidget.events_layer_input.currentLayer()
 
         if selected_layer:
-            self.dockwidget.tensor_components_group.setEnabled(True)
-
             # Enable tensor components inputs, and set the layer for each
             tensor_components = [
                 ("Mrr", self.dockwidget.mrr_input_field),
@@ -327,6 +337,25 @@ class QBeachball:
         else:
             self.dockwidget.tensor_components_group.setEnabled(False)
 
+    def update_sdp_components_inputs(self):
+        """
+        Update the sdp components comboboxes, based on the currently selected layer.
+        """
+        selected_layer = self.dockwidget.events_layer_input.currentLayer()
+
+        if selected_layer:
+            # Enable sdp components inputs, and set the layer for each
+            sdp_components = [
+                ("strike", self.dockwidget.strike_input_field),
+                ("dip", self.dockwidget.dip_input_field),
+                ("rake", self.dockwidget.rake_input_field),
+            ]
+            for component, control in sdp_components:
+                control.setLayer(selected_layer)
+                control.setField(
+                    component
+                )  # Set the field to the corresponding sdp component, if it exists
+
     def handle_layer_changed(self):
         """
         Update the fields comboboxes, based on the currently selected layer,
@@ -335,8 +364,12 @@ class QBeachball:
         selected_layer = self.dockwidget.events_layer_input.currentLayer()
 
         self.update_tensor_components_inputs()
+        self.update_sdp_components_inputs()
 
         if selected_layer:
+            # Enable focal mechanism fields selection group
+            self.dockwidget.focal_mechanism_group.setEnabled(True)
+
             self.dockwidget.id_field_select.setLayer(selected_layer)
             self.dockwidget.depth_color_field.setLayer(selected_layer)
             self.dockwidget.depth_color_field.setField("Depth")
@@ -366,6 +399,7 @@ class QBeachball:
             "output_directory": get_plugin_output_dir(),
             "depth_based_color": True,
             "depth_field": None,
+            # Option 1: use moment tensor components
             "tensor_components": {
                 "Mrr": None,
                 "Mtt": None,
@@ -373,6 +407,12 @@ class QBeachball:
                 "Mrt": None,
                 "Mrp": None,
                 "Mtp": None,
+            },
+            # Option 2: use strike, dip, rake
+            "sdp_components": {
+                "strike": None,
+                "dip": None,
+                "rake": None,
             },
         }
 
@@ -417,6 +457,17 @@ class QBeachball:
             "Mtp"
         ] = self.dockwidget.mtp_input_field.currentField()
 
+        # SDP components
+        self.plugin_params["sdp_components"][
+            "strike"
+        ] = self.dockwidget.strike_input_field.currentField()
+        self.plugin_params["sdp_components"][
+            "dip"
+        ] = self.dockwidget.dip_input_field.currentField()
+        self.plugin_params["sdp_components"][
+            "rake"
+        ] = self.dockwidget.rake_input_field.currentField()
+
     def run(self):
         """Run method that loads and starts the plugin"""
         self.plugin_params = self.initialize_params()
@@ -441,6 +492,12 @@ class QBeachball:
                 ("Mtp", self.dockwidget.mtp_input_field),
             ]
 
+            sdp_components = [
+                ("strike", self.dockwidget.strike_input_field),
+                ("dip", self.dockwidget.dip_input_field),
+                ("rake", self.dockwidget.rake_input_field),
+            ]
+
             # Connect signals
             self.dockwidget.svgs_output_widget.setFilePath(get_plugin_output_dir())
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
@@ -450,9 +507,13 @@ class QBeachball:
                 self.handle_depth_based_color_changed
             )
 
-            # Connect signals for field inputs
+            # Connect signals for tensor component inputs
             self.dockwidget.id_field_select.fieldChanged.connect(self.update_params)
             for _, control in tensor_components:
+                control.fieldChanged.connect(self.update_params)
+
+            # Connect signals for sdp component inputs
+            for _, control in sdp_components:
                 control.fieldChanged.connect(self.update_params)
 
             self.dockwidget.events_layer_input.layerChanged.connect(

@@ -64,16 +64,23 @@ def make_beachball(
     depth_based_color=True,
     depth_field="Depth",
     tensor_components=None,
+    sdp_components=None,
 ):
-    tensor_components = tensor_components or ["Mrr", "Mtt", "Mpp", "Mrt", "Mrp", "Mtp"]
+    # tensor_components = tensor_components or ["Mrr", "Mtt", "Mpp", "Mrt", "Mrp", "Mtp"]
 
     ev = event
-    mt = [
-        ev[component] for component in tensor_components
-    ]  # [ev["Mrr"], ev["Mtt"], ev["Mpp"], ev["Mrt"], ev["Mrp"], ev["Mtp"]]
-    mt = [float(x) for x in mt]  # Cast to float
+    focal_mechanism = None
+    if tensor_components:
+        mt = [ev[component] for component in tensor_components]
+        focal_mechanism = [float(x) for x in mt]
 
-    # sdp = [ev["Strike_1"], ev["Dip_1"], ev["Rake_1"]]
+    if sdp_components:
+        sdp = [ev[component] for component in sdp_components]
+        focal_mechanism = [float(x) for x in sdp]
+
+    if not tensor_components and not sdp_components:
+        logging.error("No tensor or sdp components provided.")
+        raise ValueError("No tensor or strike/dip/rake components provided.")
 
     # Default black
     bb_color = "k"
@@ -86,7 +93,7 @@ def make_beachball(
     try:
         logging.info("Making beachball for %s", event[event_id])
         beachball(
-            mt,
+            focal_mechanism,
             linewidth=bb_linewidth,
             size=bb_size,
             width=bb_width,

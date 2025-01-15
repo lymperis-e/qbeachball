@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>384</width>
-    <height>590</height>
+    <height>631</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -74,72 +74,123 @@ QListWidget::item::selected {
          </widget>
         </item>
         <item row="10" column="0" colspan="2">
-         <widget class="QgsCollapsibleGroupBox" name="tensor_components_group">
+         <widget class="QgsCollapsibleGroupBox" name="focal_mechanism_group">
           <property name="enabled">
            <bool>false</bool>
           </property>
           <property name="title">
-           <string>Moment Tensor Components</string>
+           <string>Focal Mechanism</string>
           </property>
           <layout class="QGridLayout" name="gridLayout_4">
-           <item row="2" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mpp_input_field"/>
-           </item>
-           <item row="5" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mtp_input_field"/>
-           </item>
-           <item row="1" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mtt_input_field"/>
-           </item>
            <item row="0" column="0">
-            <widget class="QLabel" name="label_5">
-             <property name="text">
-              <string>Mrr</string>
+            <widget class="QTabWidget" name="focal_mechanism_tabs">
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="label_7">
-             <property name="text">
-              <string>Mpp</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="label_8">
-             <property name="text">
-              <string>Mrt</string>
-             </property>
-            </widget>
-           </item>
-           <item row="4" column="0">
-            <widget class="QLabel" name="label_9">
-             <property name="text">
-              <string>Mrp</string>
-             </property>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QLabel" name="label_10">
-             <property name="text">
-              <string>Mtp</string>
-             </property>
-            </widget>
-           </item>
-           <item row="3" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrt_input_field"/>
-           </item>
-           <item row="4" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrp_input_field"/>
-           </item>
-           <item row="0" column="1" colspan="3">
-            <widget class="QgsFieldComboBox" name="mrr_input_field"/>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="label_6">
-             <property name="text">
-              <string>Mtt</string>
-             </property>
+             <widget class="QWidget" name="tab">
+              <attribute name="title">
+               <string>Strike/Dip/Rake</string>
+              </attribute>
+              <layout class="QFormLayout" name="formLayout_3">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_12">
+                 <property name="text">
+                  <string>Strike</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QgsFieldComboBox" name="strike_input_field"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_11">
+                 <property name="text">
+                  <string>Dip</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QgsFieldComboBox" name="dip_input_field"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_13">
+                 <property name="text">
+                  <string>Rake</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QgsFieldComboBox" name="rake_input_field"/>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="tab_2">
+              <attribute name="title">
+               <string>Moment Tensor (Harvard GCMT)</string>
+              </attribute>
+              <layout class="QFormLayout" name="formLayout_2">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>Mrr</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QgsFieldComboBox" name="mrr_input_field"/>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Mtt</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QgsFieldComboBox" name="mtt_input_field"/>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Mpp</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QgsFieldComboBox" name="mpp_input_field"/>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="label_8">
+                 <property name="text">
+                  <string>Mrt</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QgsFieldComboBox" name="mrt_input_field"/>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="label_9">
+                 <property name="text">
+                  <string>Mrp</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QgsFieldComboBox" name="mrp_input_field"/>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>Mtp</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QgsFieldComboBox" name="mtp_input_field"/>
+               </item>
+              </layout>
+             </widget>
             </widget>
            </item>
           </layout>

@@ -36,6 +36,7 @@ def make_bbs(
     depth_based_color,
     depth_field,
     tensor_components,
+    sdp_components,
 ):
     """
     Make beachballs from a list of rows.
@@ -61,6 +62,7 @@ def make_bbs(
             depth_based_color=depth_based_color,
             depth_field=depth_field,
             tensor_components=tensor_components,
+            sdp_components=sdp_components,
         )
         if i % 1000 == 0:
             print(i)
@@ -95,6 +97,7 @@ def handler(
     depth_based_color=True,
     depth_field="Depth",
     tensor_components=None,
+    sdp_components=None,
 ):
     """
     Handle the process of making beachballs from a SQLite database or a CSV file.
@@ -140,6 +143,7 @@ def handler(
         depth_based_color,
         depth_field,
         tensor_components,
+        sdp_components,
     )
     return successes
 
