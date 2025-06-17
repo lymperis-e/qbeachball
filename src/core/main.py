@@ -1,5 +1,5 @@
 """
-Make beachballs (focal mechanism plots) from GCMT events in a sqlite database. 
+Make beachballs (focal mechanism plots) from GCMT events in a sqlite database.
 
 Runs as a command-line script, taking the following arguments:
 - sqlite_file: path to the SQLite database file
@@ -15,7 +15,7 @@ Runs as a command-line script, taking the following arguments:
 Can also be used as a module, in which case it provides a function, handler, that takes the same arguments as the command-line script.
 
 ------------------------------------------------------------------------------------------------------------------------
-Adapted Richard Styron's [code](https://github.com/cossatot/gcmt_utils/blob/gem_desktop/scripts/make_bbs_from_sql.py), 
+Adapted Richard Styron's [code](https://github.com/cossatot/gcmt_utils/blob/gem_desktop/scripts/make_bbs_from_sql.py),
 as presented in [this article](https://rocksandwater.net/blog/2017/09/plot-focal-mechs-in-qgis/)
 """
 
@@ -35,6 +35,8 @@ def make_bbs(
     event_id,
     depth_based_color,
     depth_field,
+    regime_based_color,
+    regime_field,
     tensor_components,
     sdp_components,
 ):
@@ -61,6 +63,8 @@ def make_bbs(
             event_id=event_id,
             depth_based_color=depth_based_color,
             depth_field=depth_field,
+            regime_based_color=regime_based_color,
+            regime_field=regime_field,
             tensor_components=tensor_components,
             sdp_components=sdp_components,
         )
@@ -96,6 +100,8 @@ def handler(
     event_id="Event",
     depth_based_color=True,
     depth_field="Depth",
+    regime_based_color=False,
+    regime_field="TectonicRegime",
     tensor_components=None,
     sdp_components=None,
 ):
@@ -142,6 +148,8 @@ def handler(
         event_id,
         depth_based_color,
         depth_field,
+        regime_based_color,
+        regime_field,
         tensor_components,
         sdp_components,
     )

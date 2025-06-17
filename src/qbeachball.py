@@ -257,6 +257,8 @@ class QBeachball:
             event_id=self.plugin_params["id_field"],
             depth_based_color=self.plugin_params["depth_based_color"],
             depth_field=self.plugin_params["depth_field"],
+            regime_based_color=self.plugin_params["regime_based_color"],
+            regime_field=self.plugin_params["regime_field"],
             tensor_components=tensor_components if method == 1 else None,
             sdp_components=sdp_components if method == 0 else None,
         )
@@ -373,6 +375,8 @@ class QBeachball:
             self.dockwidget.id_field_select.setLayer(selected_layer)
             self.dockwidget.depth_color_field.setLayer(selected_layer)
             self.dockwidget.depth_color_field.setField("Depth")
+            self.dockwidget.regime_color_field.setLayer(selected_layer)
+            self.dockwidget.regime_color_field.setField("Regime")
             self.plugin_params["input_layer"] = selected_layer
         else:
             self.plugin_params["input_layer"] = None
@@ -387,9 +391,31 @@ class QBeachball:
             self.dockwidget.depth_color_field.setField("Depth")
 
             self.plugin_params["depth_based_color"] = True
+
+            # disable regime-based color if depth-based color is enabled
+            self.dockwidget.regime_color_checkbox.setChecked(False)
+            self.dockwidget.regime_color_group.setEnabled(False)
         else:
             self.dockwidget.depth_color_group.setEnabled(False)
             self.plugin_params["depth_based_color"] = False
+
+    def handle_regime_based_color_changed(self):
+        """
+        Update the plugin parameters when the regime-based color checkbox is changed.
+        """
+
+        if self.dockwidget.regime_color_checkbox.isChecked():
+            self.dockwidget.regime_color_group.setEnabled(True)
+            self.dockwidget.regime_color_field.setField("Regime")
+
+            self.plugin_params["regime_based_color"] = True
+
+            # disable depth-based color if regime-based color is enabled
+            self.dockwidget.depth_color_checkbox.setChecked(False)
+            self.dockwidget.depth_color_group.setEnabled(False)
+        else:
+            self.dockwidget.regime_color_group.setEnabled(False)
+            self.plugin_params["regime_based_color"] = False
 
     def initialize_params(self):
         """Initialize the parameters for the plugin"""
@@ -399,6 +425,8 @@ class QBeachball:
             "output_directory": get_plugin_output_dir(),
             "depth_based_color": True,
             "depth_field": None,
+            "regime_based_color": False,
+            "regime_field": None,
             # Option 1: use moment tensor components
             "tensor_components": {
                 "Mrr": None,
@@ -435,6 +463,13 @@ class QBeachball:
 
         self.plugin_params["depth_field"] = (
             self.dockwidget.depth_color_field.currentField()
+        )
+
+        self.plugin_params["regime_based_color"] = (
+            self.dockwidget.regime_color_checkbox.isChecked()
+        )
+        self.plugin_params["regime_field"] = (
+            self.dockwidget.regime_color_field.currentField()
         )
 
         # Tensor components
@@ -506,6 +541,13 @@ class QBeachball:
             self.dockwidget.depth_color_checkbox.stateChanged.connect(
                 self.handle_depth_based_color_changed
             )
+
+            self.dockwidget.regime_color_checkbox.stateChanged.connect(
+                self.handle_regime_based_color_changed
+            )
+
+            self.dockwidget.depth_color_field.fieldChanged.connect(self.update_params)
+            self.dockwidget.regime_color_field.fieldChanged.connect(self.update_params)
 
             # Connect signals for tensor component inputs
             self.dockwidget.id_field_select.fieldChanged.connect(self.update_params)

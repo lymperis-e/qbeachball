@@ -9,7 +9,7 @@ server=False
 experimental=False
 hasProcessingProvider=no
 tags=python, seismic, focal mechanism, beachball, geology, seismology, earthquake, fault, hypocenter, epicenter
-version=1.1.1
+version=1.2.0
 author=Lymperis Efstathios
 email=geo.elymperis@gmail.com
 tracker=https://github.com/lymperis-e/qbeachball/issues
@@ -23,21 +23,33 @@ about=
       1. Beachball plots are created from a layer of events, and rendered as SVG icons. The icons are saved (by default in a folder called 'beachball_svgs' in the project directory) and named based on the selected ID field (may be an fid or an event name/identifier, but it must be unique). <br/>
       2. A layer symbology is created, using SVG markers with a data-defined expression, to load the SVG for each event based on the selected id field/event name. <br/>
     The user can then easily modify the symbology (e.g. change the marker size). <br/><br/>
+    You can color the beachballs based on depth or tectonic regime. For the latter, you will need a field describing each event`s regime, using the following nomenclature:
+    <ul>
+      <li>SS : Strike-slip faulting</li>
+      <li>TF : Thrust faulting</li>
+      <li>NF : Normal faulting</li>
+      <li>NS : Extensional Strike Slip faulting</li>
+      <li>TS : Compressional Strike slip faulting</li>
+      <li>XF, UF : Unknown</li>
+    </ul>
+    <br/><br/>
     <strong>Required fields:</strong>The data at hand, must contain either strike/rake/dip, or the 6 moment tensor components (Harvard GCMT convention: Mrr, Mtt, Mpp, Mrt, Mrp, Mtp) and the event location (latitude, longitude, depth). <br/><br/>
     <strong>Warning:</strong> creating the SVGs is currently done in the main thread, so for large datasets, the process may take a while, during which QGIS may appear unresponsive. This will be delegated to a processing provider in the next version. </br></br>
     <strong>Input format:</strong>You can use a CSV/TSV file <a href="https://www.qgistutorials.com/en/docs/importing_spreadsheets_csv.html">tutorial</a> or any other vector layer (e.g. shapefile, geopackage) with the required fields. You can find a sample dataset, extracted from the <a href="https://www.globalcmt.org/CMTfiles.html">GCMT Catalog</a>, <a href="https://raw.githubusercontent.com/lymperis-e/qbeachball/refs/heads/main/sample_data/south-aegean-gcmt_2017_09_07.csv">here</a> <br/>
     <strong>Python dependencies:</strong> The plugin requires the <strong>obspy, matplotlib, numpy</strong> packages. Upon installing the plugin, you will be prompted to install them. In some cases, this may fail you need to install it manually. In this case, search for manual python dependency installation in QGIS, or <a href="mailto:geo.elymperis@gmail.com">email</a> me to try and troubleshoot it together.
     The plugin was bootstraped using <a href="https://rocksandwater.net/blog/2017/09/plot-focal-mechs-in-qgis/">this</a> amazing article by Richard Styron.<br/><br/>
     <strong>Citation:</strong> If you use this plugin in your research, please cite it as: <br/> 
-    Efstathios Lymperis (2025). QBeachball: A QGIS plugin for plotting focal mechanisms, based on the ObsPy library. Version 1.0.0 URL: https://github.com/lymperis-e/qbeachball [last accessed yyyy/mm/dd] 
+    Efstathios Lymperis (2025). QBeachball: A QGIS plugin for plotting focal mechanisms, based on the ObsPy library. Version 1.2.0 URL: https://github.com/lymperis-e/qbeachball [last accessed yyyy/mm/dd] 
     <br/>
     You may also like to cite ObsPy, the library used under the hood.
     
 
 description=Easily plot focal mechanisms (beachballs) onto a map. 
 
-changelog=1.1.0
-    - Added strike/dip/rake option
+changelog=1.2.0
+  - Added feature: color beachballs based on tectonic regime
+1.1.0
+  - Added strike/dip/rake option
 
 
 

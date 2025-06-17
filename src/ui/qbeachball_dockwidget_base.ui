@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>384</width>
-    <height>631</height>
+    <width>421</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -42,28 +42,28 @@ QListWidget::item::selected {
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QWidget" name="widget_14" native="true">
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0" colspan="2">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
          <widget class="QLabel" name="label_3">
           <property name="text">
            <string>Events Layer</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2">
+        <item>
          <widget class="QgsMapLayerComboBox" name="events_layer_input"/>
         </item>
-        <item row="2" column="0" colspan="2">
+        <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
            <string>ID Field</string>
           </property>
          </widget>
         </item>
-        <item row="3" column="0" colspan="2">
+        <item>
          <widget class="QgsFieldComboBox" name="id_field_select"/>
         </item>
-        <item row="6" column="0">
+        <item>
          <widget class="QCheckBox" name="depth_color_checkbox">
           <property name="text">
            <string>Epicenter depth-based color</string>
@@ -73,7 +73,82 @@ QListWidget::item::selected {
           </property>
          </widget>
         </item>
-        <item row="10" column="0" colspan="2">
+        <item>
+         <widget class="QGroupBox" name="depth_color_group">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Depth field</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QgsFieldComboBox" name="depth_color_field"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="regime_color_checkbox">
+          <property name="text">
+           <string>Regime-based color</string>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="regime_color_group">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>70</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>16777215</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="title">
+           <string>Regime field</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Must contain values: </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QgsFieldComboBox" name="regime_color_field">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QgsCollapsibleGroupBox" name="focal_mechanism_group">
           <property name="enabled">
            <bool>false</bool>
@@ -196,14 +271,21 @@ QListWidget::item::selected {
           </layout>
          </widget>
         </item>
-        <item row="12" column="0">
+        <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
            <string>Save icons to/ Read icons from:</string>
           </property>
          </widget>
         </item>
-        <item row="14" column="0">
+        <item>
+         <widget class="QgsFileWidget" name="svgs_output_widget">
+          <property name="storageMode">
+           <enum>QgsFileWidget::GetDirectory</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="verticalSpacer">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -219,48 +301,17 @@ QListWidget::item::selected {
           </property>
          </spacer>
         </item>
-        <item row="15" column="0" colspan="2">
+        <item>
          <widget class="QPushButton" name="btn_make_svgs">
           <property name="text">
            <string>Create Icons</string>
           </property>
          </widget>
         </item>
-        <item row="17" column="0" colspan="2">
+        <item>
          <widget class="QPushButton" name="btn_plot">
           <property name="text">
            <string>Plot on Map</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0" colspan="2">
-         <widget class="QGroupBox" name="depth_color_group">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Depth field</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QgsFieldComboBox" name="depth_color_field"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="13" column="0" colspan="2">
-         <widget class="QgsFileWidget" name="svgs_output_widget">
-          <property name="storageMode">
-           <enum>QgsFileWidget::GetDirectory</enum>
           </property>
          </widget>
         </item>
