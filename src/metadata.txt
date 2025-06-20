@@ -46,9 +46,7 @@ about=
 
 description=Easily plot focal mechanisms (beachballs) onto a map. 
 
-changelog=1.2.0
-  - Added feature: color beachballs based on tectonic regime
-1.1.0
+changelog=1.1.0
   - Added strike/dip/rake option
 
 
