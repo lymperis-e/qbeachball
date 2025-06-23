@@ -29,14 +29,8 @@ from .readers.qgis_reader import read_from_layer
 def make_bbs(
     rows,
     directory,
-    fig_format,
     bb_size,
-    bb_width,
     event_id,
-    depth_based_color,
-    depth_field,
-    regime_based_color,
-    regime_field,
     tensor_components,
     sdp_components,
 ):
@@ -45,26 +39,17 @@ def make_bbs(
 
     rows: a list of dictionaries of data
     directory: directory to save the beachballs
-    fig_format: format to save the beachballs
     bb_size: size of the beachballs
-    bb_width: width of the beachball lines
     dpi: resolution of the beachballs
     """
     succ = 0
     for i, row in enumerate(rows):
         make_beachball(
             event=row,
-            fig_format=fig_format or "svg",
+            fig_format="svg",
             directory=directory,
-            bb_linewidth=bb_width or 2,
             bb_size=int(bb_size) or 20,
-            bb_width=int(bb_width) or 10,
-            bb_color="b",
             event_id=event_id,
-            depth_based_color=depth_based_color,
-            depth_field=depth_field,
-            regime_based_color=regime_based_color,
-            regime_field=regime_field,
             tensor_components=tensor_components,
             sdp_components=sdp_components,
         )
@@ -94,14 +79,8 @@ def handler(
     qgs_layer=None,
     max_rows=None,
     directory=None,
-    fig_format=None,
     bb_size=None,
-    bb_width=None,
     event_id="Event",
-    depth_based_color=True,
-    depth_field="Depth",
-    regime_based_color=False,
-    regime_field="TectonicRegime",
     tensor_components=None,
     sdp_components=None,
 ):
@@ -142,14 +121,8 @@ def handler(
     successes = make_bbs(
         rows,
         directory,
-        fig_format,
         bb_size,
-        bb_width,
         event_id,
-        depth_based_color,
-        depth_field,
-        regime_based_color,
-        regime_field,
         tensor_components,
         sdp_components,
     )

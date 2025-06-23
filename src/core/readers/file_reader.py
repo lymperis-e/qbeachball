@@ -1,5 +1,5 @@
 """
-Read focal mechanism features from a csv/sqlite file and return them as a list of dictionaries.  
+Read focal mechanism features from a csv/sqlite file and return them as a list of dictionaries.
 """
 
 import csv

@@ -56,97 +56,12 @@ QListWidget::item::selected {
         <item>
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>ID Field</string>
+           <string>Unique ID Field</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QgsFieldComboBox" name="id_field_select"/>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="depth_color_checkbox">
-          <property name="text">
-           <string>Epicenter depth-based color</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="depth_color_group">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Depth field</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <item>
-            <widget class="QgsFieldComboBox" name="depth_color_field"/>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="regime_color_checkbox">
-          <property name="text">
-           <string>Regime-based color</string>
-          </property>
-          <property name="checked">
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="regime_color_group">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>70</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Regime field</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QLabel" name="label">
-             <property name="text">
-              <string>Must contain values: </string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QgsFieldComboBox" name="regime_color_field">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
         </item>
         <item>
          <widget class="QgsCollapsibleGroupBox" name="focal_mechanism_group">
@@ -274,7 +189,7 @@ QListWidget::item::selected {
         <item>
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Save icons to/ Read icons from:</string>
+           <string>Save icons to:</string>
           </property>
          </widget>
         </item>

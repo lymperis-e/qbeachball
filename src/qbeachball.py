@@ -20,35 +20,35 @@
  *                                                                         *
  ***************************************************************************/
 """
+
 import os
 
 from qgis.core import (
     Qgis,
     QgsApplication,
-    QgsMarkerSymbol,
-    QgsProject,
     QgsProperty,
-    QgsSingleSymbolRenderer,
     QgsSvgMarkerSymbolLayer,
-    QgsSymbol,
     QgsSymbolLayer,
 )
 from qgis.PyQt.QtCore import QCoreApplication, QSettings, Qt, QTranslator
-from qgis.PyQt.QtGui import QColor, QIcon
+from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
+
+from qbeachball.core.main import handler as create_beachballs
+from qbeachball.core.utils.files import get_plugin_output_dir
 
 # Import the code for the DockWidget
 from .qbeachball_dockwidget import QBeachballDockWidget
 
 # Initialize Qt resources from file resources.py
-from .resources import *
+from .resources import qInitResources
 
 basePath = os.path.dirname(os.path.abspath(__file__))
 settings_path = os.path.join(basePath, "assets/settings")
 loader_icon = os.path.join(basePath, "assets/icons/spinner.gif")
 
-from qbeachball.core.main import handler as CreateBeachballs
-from qbeachball.core.utils.files import get_plugin_output_dir
+
+qInitResources()
 
 
 class QBeachball:
@@ -246,19 +246,13 @@ class QBeachball:
         # Check which tab is checked: tensor or sdp
         method = self.dockwidget.focal_mechanism_tabs.currentIndex()
 
-        successes = CreateBeachballs(
+        successes = create_beachballs(
             csv_file=None,
             qgs_layer=INPUT_LAYER,
             max_rows=20,
             directory=self.plugin_params["output_directory"],
-            fig_format="svg",
             bb_size=20,
-            bb_width=10,
             event_id=self.plugin_params["id_field"],
-            depth_based_color=self.plugin_params["depth_based_color"],
-            depth_field=self.plugin_params["depth_field"],
-            regime_based_color=self.plugin_params["regime_based_color"],
-            regime_field=self.plugin_params["regime_field"],
             tensor_components=tensor_components if method == 1 else None,
             sdp_components=sdp_components if method == 0 else None,
         )
@@ -370,52 +364,12 @@ class QBeachball:
 
         if selected_layer:
             # Enable focal mechanism fields selection group
+            self.dockwidget.id_field_select.setLayer(selected_layer)
             self.dockwidget.focal_mechanism_group.setEnabled(True)
 
-            self.dockwidget.id_field_select.setLayer(selected_layer)
-            self.dockwidget.depth_color_field.setLayer(selected_layer)
-            self.dockwidget.depth_color_field.setField("Depth")
-            self.dockwidget.regime_color_field.setLayer(selected_layer)
-            self.dockwidget.regime_color_field.setField("Regime")
             self.plugin_params["input_layer"] = selected_layer
         else:
             self.plugin_params["input_layer"] = None
-
-    def handle_depth_based_color_changed(self):
-        """
-        Update the plugin parameters when the depth-based color checkbox is changed.
-        """
-
-        if self.dockwidget.depth_color_checkbox.isChecked():
-            self.dockwidget.depth_color_group.setEnabled(True)
-            self.dockwidget.depth_color_field.setField("Depth")
-
-            self.plugin_params["depth_based_color"] = True
-
-            # disable regime-based color if depth-based color is enabled
-            self.dockwidget.regime_color_checkbox.setChecked(False)
-            self.dockwidget.regime_color_group.setEnabled(False)
-        else:
-            self.dockwidget.depth_color_group.setEnabled(False)
-            self.plugin_params["depth_based_color"] = False
-
-    def handle_regime_based_color_changed(self):
-        """
-        Update the plugin parameters when the regime-based color checkbox is changed.
-        """
-
-        if self.dockwidget.regime_color_checkbox.isChecked():
-            self.dockwidget.regime_color_group.setEnabled(True)
-            self.dockwidget.regime_color_field.setField("Regime")
-
-            self.plugin_params["regime_based_color"] = True
-
-            # disable depth-based color if regime-based color is enabled
-            self.dockwidget.depth_color_checkbox.setChecked(False)
-            self.dockwidget.depth_color_group.setEnabled(False)
-        else:
-            self.dockwidget.regime_color_group.setEnabled(False)
-            self.plugin_params["regime_based_color"] = False
 
     def initialize_params(self):
         """Initialize the parameters for the plugin"""
@@ -423,10 +377,6 @@ class QBeachball:
             "input_layer": None,
             "id_field": None,
             "output_directory": get_plugin_output_dir(),
-            "depth_based_color": True,
-            "depth_field": None,
-            "regime_based_color": False,
-            "regime_field": None,
             # Option 1: use moment tensor components
             "tensor_components": {
                 "Mrr": None,
@@ -457,51 +407,36 @@ class QBeachball:
             self.dockwidget.svgs_output_widget.filePath()
         )
 
-        self.plugin_params["depth_based_color"] = (
-            self.dockwidget.depth_color_checkbox.isChecked()
-        )
-
-        self.plugin_params["depth_field"] = (
-            self.dockwidget.depth_color_field.currentField()
-        )
-
-        self.plugin_params["regime_based_color"] = (
-            self.dockwidget.regime_color_checkbox.isChecked()
-        )
-        self.plugin_params["regime_field"] = (
-            self.dockwidget.regime_color_field.currentField()
-        )
-
         # Tensor components
-        self.plugin_params["tensor_components"][
-            "Mrr"
-        ] = self.dockwidget.mrr_input_field.currentField()
-        self.plugin_params["tensor_components"][
-            "Mtt"
-        ] = self.dockwidget.mtt_input_field.currentField()
-        self.plugin_params["tensor_components"][
-            "Mpp"
-        ] = self.dockwidget.mpp_input_field.currentField()
-        self.plugin_params["tensor_components"][
-            "Mrt"
-        ] = self.dockwidget.mrt_input_field.currentField()
-        self.plugin_params["tensor_components"][
-            "Mrp"
-        ] = self.dockwidget.mrp_input_field.currentField()
-        self.plugin_params["tensor_components"][
-            "Mtp"
-        ] = self.dockwidget.mtp_input_field.currentField()
+        self.plugin_params["tensor_components"]["Mrr"] = (
+            self.dockwidget.mrr_input_field.currentField()
+        )
+        self.plugin_params["tensor_components"]["Mtt"] = (
+            self.dockwidget.mtt_input_field.currentField()
+        )
+        self.plugin_params["tensor_components"]["Mpp"] = (
+            self.dockwidget.mpp_input_field.currentField()
+        )
+        self.plugin_params["tensor_components"]["Mrt"] = (
+            self.dockwidget.mrt_input_field.currentField()
+        )
+        self.plugin_params["tensor_components"]["Mrp"] = (
+            self.dockwidget.mrp_input_field.currentField()
+        )
+        self.plugin_params["tensor_components"]["Mtp"] = (
+            self.dockwidget.mtp_input_field.currentField()
+        )
 
         # SDP components
-        self.plugin_params["sdp_components"][
-            "strike"
-        ] = self.dockwidget.strike_input_field.currentField()
-        self.plugin_params["sdp_components"][
-            "dip"
-        ] = self.dockwidget.dip_input_field.currentField()
-        self.plugin_params["sdp_components"][
-            "rake"
-        ] = self.dockwidget.rake_input_field.currentField()
+        self.plugin_params["sdp_components"]["strike"] = (
+            self.dockwidget.strike_input_field.currentField()
+        )
+        self.plugin_params["sdp_components"]["dip"] = (
+            self.dockwidget.dip_input_field.currentField()
+        )
+        self.plugin_params["sdp_components"]["rake"] = (
+            self.dockwidget.rake_input_field.currentField()
+        )
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -537,17 +472,6 @@ class QBeachball:
             self.dockwidget.svgs_output_widget.setFilePath(get_plugin_output_dir())
             self.dockwidget.btn_make_svgs.clicked.connect(self.make_svgs)
             self.dockwidget.btn_plot.clicked.connect(self.plot_beachballs)
-
-            self.dockwidget.depth_color_checkbox.stateChanged.connect(
-                self.handle_depth_based_color_changed
-            )
-
-            self.dockwidget.regime_color_checkbox.stateChanged.connect(
-                self.handle_regime_based_color_changed
-            )
-
-            self.dockwidget.depth_color_field.fieldChanged.connect(self.update_params)
-            self.dockwidget.regime_color_field.fieldChanged.connect(self.update_params)
 
             # Connect signals for tensor component inputs
             self.dockwidget.id_field_select.fieldChanged.connect(self.update_params)
