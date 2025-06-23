@@ -61,7 +61,6 @@ def clear_or_create_directory(path):
 
 
 def copy_files(src_dir, dest_dir):
-
     # Validate input directories
     if not os.path.exists(src_dir):
         print(f"Source directory does not exist: {src_dir}")
@@ -285,7 +284,6 @@ def main(plugin_name: str, install_to_qgis: bool = False):
 
 
 if __name__ == "__main__":
-
     # parse argument to install to QGIS
     install_to_qgis = False
     # if len(sys.argv) > 1:

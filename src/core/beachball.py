@@ -1,4 +1,5 @@
 import logging
+import re
 import sys
 
 from .dependencies.check_dependencies import check
@@ -52,34 +53,6 @@ def depth_to_color(val, v_min=10.0, v_max=700.0, cmap="viridis", log=True):
     return colormap((val_ - v_min_) / (v_max_ - v_min_))
 
 
-def regime_to_color(regime):
-    """
-    Convert tectonic regime to color.
-
-    Args:
-        regime (str): Tectonic regime (e.g., "subduction", "rift", "transform").
-        cmap (str, optional): Colormap name. Defaults to "viridis".
-
-    Returns:
-        str: Color corresponding to the tectonic regime.
-    """
-    regimes = {
-        "SS": "green",  # Strike-slip faulting
-        "TF": "blue",  # Thrust faulting
-        "NF": "red",  # Normal faulting
-        "NS": "#4DB300",  # Extensional Strike Slip faulting
-        "TS": "#00FF80",  # Compressional Strike slip faulting
-        "XF": "black",  # Unknown
-        "UF": "orange",  # Unknown or uplift
-    }
-
-    if regime in regimes:
-        return regimes[regime]
-
-    # logging.warning("Unknown tectonic regime '%s'. Using default color.", regime)
-    return "black"  # Default color for unknown regimes
-
-
 def make_beachball(
     event,
     directory,
@@ -87,12 +60,7 @@ def make_beachball(
     bb_linewidth=2,
     bb_size=20,
     bb_width=10,
-    bb_color="b",
     event_id="Event",
-    depth_based_color=True,
-    depth_field="Depth",
-    regime_based_color=False,
-    regime_field="Regime",
     tensor_components=None,
     sdp_components=None,
 ):
@@ -112,15 +80,6 @@ def make_beachball(
         logging.error("No tensor or sdp components provided.")
         raise ValueError("No tensor or strike/dip/rake components provided.")
 
-    # Default black
-    bb_color = "k"
-    if depth_based_color:
-        bb_color = depth_to_color(float(ev[depth_field]))
-
-    if regime_based_color:
-        print(f"Using regime-based color from field '{regime_field}'")
-        bb_color = regime_to_color(ev[regime_field])
-
     outfile = f"{directory}/{event[event_id]}.{fig_format}"
 
     fig = plt.figure(0)
@@ -133,12 +92,30 @@ def make_beachball(
             width=bb_width,
             outfile=outfile,
             fig=fig,
-            facecolor=bb_color,
-            bgcolor="w",
+            facecolor="#000000",
+            bgcolor="#ffffff",
             # format=fig_format,
         )
         plt.close(fig)
-
     except Exception as e:
         logging.exception(e)
+
+    with open(outfile, "r") as f:
+        content = f.read()
+
+    # Replacing dynamic parameters
+    dynamic_svg = re.sub(
+        f'style="fill: #ffffff; stroke: #000000; stroke-width: {bb_linewidth}"',
+        r'fill="#ffffff" stroke="param(outline) #000000" stroke-width="param(outline-width) 10"',
+        content,
+    )
+    dynamic_svg = re.sub(
+        f'style="stroke: #000000; stroke-width: {bb_linewidth}"',
+        r'fill="param(fill) #ffffff" stroke="param(outline) #000000" stroke-width="param(outline-width) 10"',
+        dynamic_svg,
+    )
+
+    with open(outfile, "w") as f:
+        f.write(dynamic_svg)
+
     return
